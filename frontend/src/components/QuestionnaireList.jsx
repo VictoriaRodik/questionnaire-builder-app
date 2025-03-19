@@ -1,8 +1,26 @@
-import React from "react";
+import React, { useCallback } from "react";
 import { Grid2 as Grid, Typography } from "@mui/material";
 import QuestionnaireCard from "./QuestionnaireCard";
+import { useQuestionnaires } from "../hooks/useQuestionnaires";
 
-const QuestionnaireList = ({ questionnaires, onDelete }) => {
+const QuestionnaireList = () => {
+  const { data: questionnaires, isLoading, error, deleteQuestionnaire } = useQuestionnaires();
+
+  const handleDelete = useCallback((id) => {
+    if (window.confirm("Are you sure you want to delete this questionnaire?")) {
+      deleteQuestionnaire.mutate(id);
+    }
+    
+  },[deleteQuestionnaire])
+
+  if (isLoading) {
+    return <Typography>Loading...</Typography>;
+  }
+
+  if (error) {
+    return <Typography>Error loading questionnaires</Typography>;
+  }
+
   if (!questionnaires || questionnaires.length === 0) {
     return <Typography>No questionnaires available.</Typography>;
   }
@@ -13,7 +31,7 @@ const QuestionnaireList = ({ questionnaires, onDelete }) => {
         <Grid key={questionnaire.id}>
           <QuestionnaireCard
             questionnaire={questionnaire}
-            onDelete={onDelete}
+            onDelete={handleDelete}
           />
         </Grid>
       ))}

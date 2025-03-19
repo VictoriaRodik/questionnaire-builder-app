@@ -11,16 +11,11 @@ import { useNavigate } from "react-router-dom";
 const QuestionnaireCard = ({ questionnaire, onDelete }) => {
   const navigate = useNavigate();
 
-  const handleDelete = () => {
-    if (window.confirm("Are you sure you want to delete this questionnaire?")) {
-      onDelete(questionnaire.id);
-    }
-  };
-
-  const questions =
-    typeof questionnaire.questions === "string"
-      ? JSON.parse(questionnaire.questions)
-      : questionnaire.questions;
+  const questions = Array.isArray(questionnaire.questions)
+    ? questionnaire.questions
+    : typeof questionnaire.questions === "string"
+    ? JSON.parse(questionnaire.questions)
+    : [];
 
   return (
     <Card>
@@ -37,11 +32,12 @@ const QuestionnaireCard = ({ questionnaire, onDelete }) => {
         <Button onClick={() => navigate(`/run/${questionnaire.id}`)}>
           Run
         </Button>
-        <Button color="error" onClick={handleDelete}>
+        <Button color="error" onClick={() => onDelete(questionnaire.id)}>
           Delete
         </Button>
       </CardActions>
     </Card>
   );
 };
+
 export default QuestionnaireCard;
