@@ -5,47 +5,28 @@ import DeleteTwoToneIcon from "@mui/icons-material/DeleteTwoTone";
 const QuestionItem = ({
   question,
   index,
-  setQuestions,
+  updateQuestion,
+  deleteQuestion,
   onDragStart,
   onDrop,
-  onDelete,
 }) => {
-  const handleQuestionTextChange = (e) => {
-    setQuestions((prevQuestions) =>
-      prevQuestions.map((q, i) =>
-        i === index ? { ...q, text: e.target.value } : q
-      )
-    );
+  const handleTextChange = (e) => {
+    updateQuestion(index, { ...question, text: e.target.value });
   };
 
   const handleOptionChange = (optIdx, e) => {
-    setQuestions((prevQuestions) =>
-      prevQuestions.map((q, i) =>
-        i === index
-          ? {
-              ...q,
-              options: q.options.map((opt, j) =>
-                j === optIdx ? e.target.value : opt
-              ),
-            }
-          : q
-      )
-    );
+    const newOptions = [...question.options];
+    newOptions[optIdx] = e.target.value;
+    updateQuestion(index, { ...question, options: newOptions });
   };
 
   const addOption = () => {
-    setQuestions((prevQuestions) =>
-      prevQuestions.map((q, i) =>
-        i === index ? { ...q, options: [...q.options, ""] } : q
-      )
-    );
+    updateQuestion(index, { ...question, options: [...question.options, ""] });
   };
 
   return (
     <Box
       draggable
-      role="listitem"
-      tabIndex={0}
       onDragStart={(e) => onDragStart(e, index)}
       onDragOver={(e) => e.preventDefault()}
       onDrop={(e) => onDrop(e, index)}
@@ -60,14 +41,17 @@ const QuestionItem = ({
       <Box sx={{ display: "flex", justifyContent: "space-between" }}>
         <TextField
           value={question.text}
-          onChange={handleQuestionTextChange}
-          label="Question"
+          onChange={handleTextChange}
+          label={`${question.type.charAt(0).toUpperCase()}${question.type.slice(
+            1
+          )} question`}
           sx={{ flexGrow: 0.95 }}
         />
-        <IconButton onClick={() => onDelete(index)}>
+        <IconButton onClick={() => deleteQuestion(index)}>
           <DeleteTwoToneIcon />
         </IconButton>
       </Box>
+
       {question.type !== "text" && (
         <Box mt={1}>
           {question.options.map((opt, optIdx) => (
