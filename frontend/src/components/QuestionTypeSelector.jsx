@@ -8,10 +8,11 @@ const QuestionTypeSelector = ({ onAddQuestion }) => {
     const value = event.target.value;
     setSelectedType(value);
     onAddQuestion(value);
+    setSelectedType("");
   };
 
   return (
-    <Box sx={{ minWidth: 120 }}>
+    <Box sx={{ mt: 4 }}>
       <FormControl fullWidth>
         <InputLabel id="select-label">Add Question</InputLabel>
         <Select
